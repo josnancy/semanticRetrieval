@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar  2 18:18:37 2016
-
-@author: nancy
-"""
 
 from whoosh import qparser
 from whoosh.analysis import RegexTokenizer
@@ -11,8 +5,9 @@ from whoosh.lang.porter import stem
 from whoosh.lang.morph_en import variations
 from whoosh.analysis import StopFilter
 
+
 def queryParsing(query):
-   
+    print("inside queryParsing")
     tokenizer = RegexTokenizer()
     return_list = []   
     
@@ -26,7 +21,8 @@ def queryParsing(query):
         t.text = t.text.lower()
         
         #stemming
-        #s=stem(t.text)
+        s=stem(t.text)
+        return_list.append(s)
         
         #adding variations
         termVariations = variations(t.text)

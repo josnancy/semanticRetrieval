@@ -83,6 +83,8 @@ class SearchPage(tk.Frame):
             dup_removed_qterms = list(set(all_terms))
 
             indexTerms = np.load('IndexTerms.npy')
+            print("indexTerms:")
+            print(indexTerms)
 
             #finding similar terms form Vt vectors
             termIndexes=[i for i, x in enumerate(indexTerms.tolist()) if any(thing in x for thing in dup_removed_qterms)]
@@ -100,6 +102,7 @@ class SearchPage(tk.Frame):
             if LA.norm(queryVector) != 0:
                 docs = executing_search.execute_search(queryVector.T,termIndexes)
             ResultsPage.setDocuments(ResultsPage, docs)
+            ResultsPage.query.set(mtext)
             controller.show_frame(ResultsPage)
 
     def fetchSynonyms(self, key):
@@ -135,13 +138,28 @@ class ResultsPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         ResultsPage.resultsVar = StringVar()
-        ResultsPage.label1 = ttk.Label(self, textvariable=ResultsPage.resultsVar, font=LARGE_FONT)
-        ResultsPage.label1.pack(pady=10, padx=10)
+        ResultsPage.query = StringVar()
 
-        ResultsPage.button1 = ttk.Button(self, text="Back To Search", command=lambda: controller.show_frame(SearchPage))
-        ResultsPage.button1.pack()
-        ResultsPage.resultsList = CustomListbox(self)
-        ResultsPage.resultsList.pack(fill=BOTH, expand=YES)
+        fm1 = Frame(self)
+        ResultsPage.label1 = ttk.Label(fm1, textvariable=ResultsPage.resultsVar, font=LARGE_FONT)
+        ResultsPage.label1.pack(side="left")
+
+        ResultsPage.button1 = ttk.Button(fm1, text="Back To Search", command=lambda: controller.show_frame(SearchPage))
+        ResultsPage.button1.pack(side="right")
+        fm1.pack(fill=BOTH)
+
+        fm2 = Frame(self)
+        ResultsPage.label2 = ttk.Label(fm2, text="You searched for: ", font=LARGE_FONT)
+        ResultsPage.label2.pack(side="left")
+
+        ResultsPage.label3 = ttk.Label(fm2, textvariable=ResultsPage.query, font=LARGE_FONT)
+        ResultsPage.label3.pack(side="left")
+        fm2.pack(fill=BOTH)
+
+        fm3 = Frame(self)
+        ResultsPage.resultsList = CustomListbox(fm3)
+        ResultsPage.resultsList.pack(side="top",fill=BOTH, expand=YES)
+        fm3.pack(fill=BOTH, expand=YES)
 
     def setDocuments(self,documents):
         self.resultsVar.set("Here are the matches we found.")
